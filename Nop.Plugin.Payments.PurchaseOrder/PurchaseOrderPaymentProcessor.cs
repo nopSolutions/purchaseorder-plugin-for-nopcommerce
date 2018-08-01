@@ -19,8 +19,9 @@ namespace Nop.Plugin.Payments.PurchaseOrder
         #region Fields
 
         private readonly ILocalizationService _localizationService;
-        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
+        private readonly IPaymentService _paymentService;
         private readonly ISettingService _settingService;
+        private readonly IShoppingCartService _shoppingCartService;
         private readonly IWebHelper _webHelper;
         private readonly PurchaseOrderPaymentSettings _purchaseOrderPaymentSettings;
 
@@ -29,14 +30,16 @@ namespace Nop.Plugin.Payments.PurchaseOrder
         #region Ctor
 
         public PurchaseOrderPaymentProcessor(ILocalizationService localizationService,
-            IOrderTotalCalculationService orderTotalCalculationService,
+            IPaymentService paymentService,
             ISettingService settingService,
+            IShoppingCartService shoppingCartService,
             IWebHelper webHelper,
             PurchaseOrderPaymentSettings purchaseOrderPaymentSettings)
         {
             this._localizationService = localizationService;
-            this._orderTotalCalculationService = orderTotalCalculationService;
+            this._paymentService = paymentService;
             this._settingService = settingService;
+            this._shoppingCartService = shoppingCartService;
             this._purchaseOrderPaymentSettings = purchaseOrderPaymentSettings;
             this._webHelper = webHelper;
         }
@@ -74,8 +77,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder
             //you can put any logic here
             //for example, hide this payment method if all products in the cart are downloadable
             //or hide this payment method if current customer is from certain country
-
-            if (_purchaseOrderPaymentSettings.ShippableProductRequired && !cart.RequiresShipping())
+            if (_purchaseOrderPaymentSettings.ShippableProductRequired && !_shoppingCartService.ShoppingCartRequiresShipping(cart))
                 return true;
 
             return false;
@@ -88,7 +90,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder
         /// <returns>Additional handling fee</returns>
         public decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart)
         {
-            return this.CalculateAdditionalFee(_orderTotalCalculationService, cart,
+            return _paymentService.CalculateAdditionalFee(cart,
                 _purchaseOrderPaymentSettings.AdditionalFee, _purchaseOrderPaymentSettings.AdditionalFeePercentage);
         }
 
@@ -177,7 +179,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder
             {
                 CustomValues = new Dictionary<string, object>
                 {
-                    [_localizationService.GetResource("Plugins.Payment.PurchaseOrder.PurchaseOrderNumber")] = form["PurchaseOrderNumber"]
+                    [_localizationService.GetResource("Plugins.Payment.PurchaseOrder.PurchaseOrderNumber")] = form["PurchaseOrderNumber"].ToString()
                 }
             };
         }
@@ -191,12 +193,11 @@ namespace Nop.Plugin.Payments.PurchaseOrder
         }
 
         /// <summary>
-        /// Gets a view component for displaying plugin in public store ("payment info" checkout step)
+        /// Gets a view component name for displaying plugin in public store ("payment info" checkout step)
         /// </summary>
-        /// <param name="viewComponentName">View component name</param>
-        public void GetPublicViewComponent(out string viewComponentName)
+        public string GetPublicViewComponentName()
         {
-            viewComponentName = "PaymentPurchaseOrder";
+            return "PaymentPurchaseOrder";
         }
 
         /// <summary>
@@ -208,14 +209,14 @@ namespace Nop.Plugin.Payments.PurchaseOrder
             _settingService.SaveSetting(new PurchaseOrderPaymentSettings());
 
             //locales
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee", "Additional fee");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee.Hint", "The additional fee.");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage", "Additional fee. Use percentage");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage.Hint", "Determines whether to apply a percentage additional fee to the order total. If not enabled, a fixed value is used.");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.PaymentMethodDescription", "Pay by purchase order (PO) number");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.PurchaseOrderNumber", "PO Number");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired", "Shippable product required");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired.Hint", "An option indicating whether shippable products are required in order to display this payment method during checkout.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee", "Additional fee");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee.Hint", "The additional fee.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage", "Additional fee. Use percentage");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage.Hint", "Determines whether to apply a percentage additional fee to the order total. If not enabled, a fixed value is used.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.PaymentMethodDescription", "Pay by purchase order (PO) number");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.PurchaseOrderNumber", "PO Number");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired", "Shippable product required");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired.Hint", "An option indicating whether shippable products are required in order to display this payment method during checkout.");
 
             base.Install();
         }
@@ -229,14 +230,14 @@ namespace Nop.Plugin.Payments.PurchaseOrder
             _settingService.DeleteSetting<PurchaseOrderPaymentSettings>();
 
             //locales
-            this.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee");
-            this.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee.Hint");
-            this.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage");
-            this.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage.Hint");
-            this.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.PaymentMethodDescription");
-            this.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.PurchaseOrderNumber");
-            this.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired");
-            this.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.PaymentMethodDescription");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.PurchaseOrderNumber");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired.Hint");
 
             base.Uninstall();
         }

@@ -4,7 +4,6 @@ using Nop.Plugin.Payments.PurchaseOrder.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Security;
-using Nop.Services.Stores;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
@@ -20,8 +19,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly IPermissionService _permissionService;
         private readonly ISettingService _settingService;
-        private readonly IStoreService _storeService;
-        private readonly IWorkContext _workContext;
+        private readonly IStoreContext _storeContext;
 
         #endregion
 
@@ -30,14 +28,12 @@ namespace Nop.Plugin.Payments.PurchaseOrder.Controllers
         public PaymentPurchaseOrderController(ILocalizationService localizationService,
             IPermissionService permissionService,
             ISettingService settingService,
-            IStoreService storeService,
-            IWorkContext workContext)
+            IStoreContext storeContext)
         {
             this._localizationService = localizationService;
             this._permissionService = permissionService;
             this._settingService = settingService;
-            this._storeService = storeService;
-            this._workContext = workContext;
+            this._storeContext = storeContext;
         }
 
         #endregion
@@ -50,7 +46,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder.Controllers
                 return AccessDeniedView();
 
             //load settings for a chosen store scope
-            var storeScope = this.GetActiveStoreScopeConfiguration(_storeService, _workContext);
+            var storeScope = _storeContext.ActiveStoreScopeConfiguration;
             var purchaseOrderPaymentSettings = _settingService.LoadSetting<PurchaseOrderPaymentSettings>(storeScope);
 
             var model = new ConfigurationModel
@@ -81,7 +77,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder.Controllers
                 return Configure();
 
             //load settings for a chosen store scope
-            var storeScope = this.GetActiveStoreScopeConfiguration(_storeService, _workContext);
+            var storeScope = _storeContext.ActiveStoreScopeConfiguration;
             var purchaseOrderPaymentSettings = _settingService.LoadSetting<PurchaseOrderPaymentSettings>(storeScope);
 
             //save settings
@@ -95,7 +91,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder.Controllers
             _settingService.SaveSettingOverridablePerStore(purchaseOrderPaymentSettings, x => x.AdditionalFee, model.AdditionalFee_OverrideForStore , storeScope, false);
             _settingService.SaveSettingOverridablePerStore(purchaseOrderPaymentSettings, x => x.AdditionalFeePercentage, model.AdditionalFeePercentage_OverrideForStore , storeScope, false);
             _settingService.SaveSettingOverridablePerStore(purchaseOrderPaymentSettings, x => x.ShippableProductRequired, model.ShippableProductRequired_OverrideForStore, storeScope, false);
-            
+
             //now clear settings cache
             _settingService.ClearCache();
 
