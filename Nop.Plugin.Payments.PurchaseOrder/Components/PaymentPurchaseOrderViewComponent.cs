@@ -12,9 +12,9 @@ namespace Nop.Plugin.Payments.PurchaseOrder.Components
         {
             var model = new PaymentInfoModel();
             //set postback values (we cannot access "Form" with "GET" requests)
-            if (this.Request.Method != WebRequestMethods.Http.Get)
+            if (Request.Method != WebRequestMethods.Http.Get)
             {
-                model.PurchaseOrderNumber = this.HttpContext.Request.Form["PurchaseOrderNumber"];
+                model.PurchaseOrderNumber = HttpContext.Request.Form["PurchaseOrderNumber"];
             }
 
             return View("~/Plugins/Payments.PurchaseOrder/Views/PaymentInfo.cshtml", model);
