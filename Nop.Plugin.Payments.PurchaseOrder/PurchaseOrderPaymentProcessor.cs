@@ -20,10 +20,10 @@ namespace Nop.Plugin.Payments.PurchaseOrder
 
         private readonly ILocalizationService _localizationService;
         private readonly IPaymentService _paymentService;
-        private readonly PurchaseOrderPaymentSettings _purchaseOrderPaymentSettings;
         private readonly ISettingService _settingService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IWebHelper _webHelper;
+        private readonly PurchaseOrderPaymentSettings _purchaseOrderPaymentSettings;
 
         #endregion
 

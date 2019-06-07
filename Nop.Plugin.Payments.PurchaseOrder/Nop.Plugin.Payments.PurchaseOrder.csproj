@@ -5,8 +5,8 @@
     <Company>Nop Solutions, Ltd</Company>
     <Authors>Nop Solutions, Ltd</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <PackageProjectUrl>https://www.nopcommerce.com/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/nopSolutions/nopCommerce</RepositoryUrl>
+    <PackageProjectUrl>https://www.nopcommerce.com/p/2985/nopcommerce-plugin-for-purchase-order-nopcommerce-team.aspx</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nopSolutions/purchaseorder-plugin-for-nopcommerce</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <OutputPath>..\..\Presentation\Nop.Web\Plugins\Payments.PurchaseOrder</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
