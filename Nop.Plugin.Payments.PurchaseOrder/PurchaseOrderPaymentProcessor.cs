@@ -31,17 +31,17 @@ namespace Nop.Plugin.Payments.PurchaseOrder
 
         public PurchaseOrderPaymentProcessor(ILocalizationService localizationService,
             IPaymentService paymentService,
-            PurchaseOrderPaymentSettings purchaseOrderPaymentSettings,
             ISettingService settingService,
             IShoppingCartService shoppingCartService,
-            IWebHelper webHelper)
+            IWebHelper webHelper,
+            PurchaseOrderPaymentSettings purchaseOrderPaymentSettings)
         {
             _localizationService = localizationService;
             _paymentService = paymentService;
-            _purchaseOrderPaymentSettings = purchaseOrderPaymentSettings;
             _settingService = settingService;
             _shoppingCartService = shoppingCartService;
             _webHelper = webHelper;
+            _purchaseOrderPaymentSettings = purchaseOrderPaymentSettings;
         }
 
         #endregion
