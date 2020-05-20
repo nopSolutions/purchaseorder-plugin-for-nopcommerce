@@ -209,14 +209,18 @@ namespace Nop.Plugin.Payments.PurchaseOrder
             _settingService.SaveSetting(new PurchaseOrderPaymentSettings());
 
             //locales
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee", "Additional fee");
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee.Hint", "The additional fee.");
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage", "Additional fee. Use percentage");
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage.Hint", "Determines whether to apply a percentage additional fee to the order total. If not enabled, a fixed value is used.");
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.PaymentMethodDescription", "Pay by purchase order (PO) number");
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.PurchaseOrderNumber", "PO Number");
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired", "Shippable product required");
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired.Hint", "An option indicating whether shippable products are required in order to display this payment method during checkout.");
+
+            _localizationService.AddPluginLocaleResource(new Dictionary<string, string>
+            {
+                ["Plugins.Payment.PurchaseOrder.AdditionalFee"] = "Additional fee",
+                ["Plugins.Payment.PurchaseOrder.AdditionalFee.Hint"] = "The additional fee.",
+                ["Plugins.Payment.PurchaseOrder.AdditionalFeePercentage"] = "Additional fee. Use percentage",
+                ["Plugins.Payment.PurchaseOrder.AdditionalFeePercentage.Hint"] = "Determines whether to apply a percentage additional fee to the order total. If not enabled, a fixed value is used.",
+                ["Plugins.Payment.PurchaseOrder.PaymentMethodDescription"] = "Pay by purchase order (PO) number",
+                ["Plugins.Payment.PurchaseOrder.PurchaseOrderNumber"] = "PO Number",
+                ["Plugins.Payment.PurchaseOrder.ShippableProductRequired"] = "Shippable product required",
+                ["Plugins.Payment.PurchaseOrder.ShippableProductRequired.Hint"] = "An option indicating whether shippable products are required in order to display this payment method during checkout."
+            });
 
             base.Install();
         }
@@ -230,14 +234,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder
             _settingService.DeleteSetting<PurchaseOrderPaymentSettings>();
 
             //locales
-            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFee.Hint");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.AdditionalFeePercentage.Hint");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.PaymentMethodDescription");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.PurchaseOrderNumber");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payment.PurchaseOrder.ShippableProductRequired.Hint");
+            _localizationService.DeletePluginLocaleResources("Plugins.Payment.PurchaseOrder");
 
             base.Uninstall();
         }
@@ -284,12 +281,11 @@ namespace Nop.Plugin.Payments.PurchaseOrder
         /// <summary>
         /// Gets a payment method description that will be displayed on checkout pages in the public store
         /// </summary>
-        public string PaymentMethodDescription
-        {
-            //return description of this payment method to be display on "payment method" checkout step. good practice is to make it localizable
-            //for example, for a redirection payment method, description may be like this: "You will be redirected to PayPal site to complete the payment"
-            get { return _localizationService.GetResource("Plugins.Payment.PurchaseOrder.PaymentMethodDescription"); }
-        }
+        /// <remarks>
+        /// return description of this payment method to be display on "payment method" checkout step. good practice is to make it localizable
+        /// for example, for a redirection payment method, description may be like this: "You will be redirected to PayPal site to complete the payment"
+        /// </remarks>
+        public string PaymentMethodDescription => _localizationService.GetResource("Plugins.Payment.PurchaseOrder.PaymentMethodDescription");
 
         #endregion
     }
