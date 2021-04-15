@@ -3,7 +3,7 @@ using Nop.Web.Framework.Mvc.ModelBinding;
 
 namespace Nop.Plugin.Payments.PurchaseOrder.Models
 {
-    public class PaymentInfoModel : BaseNopModel
+    public record PaymentInfoModel : BaseNopModel
     {
         [NopResourceDisplayName("Plugins.Payment.PurchaseOrder.PurchaseOrderNumber")]
         public string PurchaseOrderNumber { get; set; }
