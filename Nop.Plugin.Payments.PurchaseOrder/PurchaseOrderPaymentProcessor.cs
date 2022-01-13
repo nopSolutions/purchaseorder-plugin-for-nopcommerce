@@ -20,7 +20,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder
         #region Fields
 
         private readonly ILocalizationService _localizationService;
-        private readonly IPaymentService _paymentService;
+        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly ISettingService _settingService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IWebHelper _webHelper;
@@ -31,14 +31,14 @@ namespace Nop.Plugin.Payments.PurchaseOrder
         #region Ctor
 
         public PurchaseOrderPaymentProcessor(ILocalizationService localizationService,
-            IPaymentService paymentService,
+            IOrderTotalCalculationService orderTotalCalculationService,
             ISettingService settingService,
             IShoppingCartService shoppingCartService,
             IWebHelper webHelper,
             PurchaseOrderPaymentSettings purchaseOrderPaymentSettings)
         {
             _localizationService = localizationService;
-            _paymentService = paymentService;
+            _orderTotalCalculationService = orderTotalCalculationService;
             _settingService = settingService;
             _shoppingCartService = shoppingCartService;
             _webHelper = webHelper;
@@ -102,7 +102,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder
         /// </returns>
         public async Task<decimal> GetAdditionalHandlingFeeAsync(IList<ShoppingCartItem> cart)
         {
-            return await _paymentService.CalculateAdditionalFeeAsync(cart,
+            return await _orderTotalCalculationService.CalculatePaymentAdditionalFeeAsync(cart,
                 _purchaseOrderPaymentSettings.AdditionalFee, _purchaseOrderPaymentSettings.AdditionalFeePercentage);
         }
 
@@ -247,7 +247,7 @@ namespace Nop.Plugin.Payments.PurchaseOrder
 
             //locales
 
-            await _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
+            await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
             {
                 ["Plugins.Payment.PurchaseOrder.AdditionalFee"] = "Additional fee",
                 ["Plugins.Payment.PurchaseOrder.AdditionalFee.Hint"] = "The additional fee.",
