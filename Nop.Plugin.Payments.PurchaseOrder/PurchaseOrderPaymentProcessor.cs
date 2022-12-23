@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
+using Nop.Plugin.Payments.PurchaseOrder.Components;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Orders;
@@ -231,9 +232,9 @@ namespace Nop.Plugin.Payments.PurchaseOrder
         /// <summary>
         /// Gets a view component name for displaying plugin in public store ("payment info" checkout step)
         /// </summary>
-        public string GetPublicViewComponentName()
+        public Type GetPublicViewComponent()
         {
-            return "PaymentPurchaseOrder";
+            return typeof(PaymentPurchaseOrderViewComponent);
         }
 
         /// <summary>
