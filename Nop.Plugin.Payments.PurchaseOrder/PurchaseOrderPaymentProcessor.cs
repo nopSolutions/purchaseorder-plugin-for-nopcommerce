@@ -210,7 +210,7 @@ public class PurchaseOrderPaymentProcessor : BasePlugin, IPaymentMethod
     {
         return new ProcessPaymentRequest
         {
-            CustomValues = new Dictionary<string, object>
+            CustomValues = new CustomValues
             {
                 [await _localizationService.GetResourceAsync("Plugins.Payment.PurchaseOrder.PurchaseOrderNumber")] = form["PurchaseOrderNumber"].ToString()
             }
