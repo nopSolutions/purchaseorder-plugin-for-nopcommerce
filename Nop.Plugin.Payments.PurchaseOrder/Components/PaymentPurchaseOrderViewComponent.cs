@@ -1,7 +1,7 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Plugin.Payments.PurchaseOrder.Models;
 using Nop.Web.Framework.Components;
+using System.Net;
 
 namespace Nop.Plugin.Payments.PurchaseOrder.Components;
 
